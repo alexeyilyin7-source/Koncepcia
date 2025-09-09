@@ -1,0 +1,2 @@
+# Koncepcia
+Koncepcia
