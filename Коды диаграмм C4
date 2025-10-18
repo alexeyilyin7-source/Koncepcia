@@ -1,0 +1,207 @@
+1. Контекстная диаграмма (Context Diagram)
+@startuml Контекстная_диаграмма_ПРИС_КВП_ДС
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+title Контекстная диаграмма системы ПРИС КВП ДС
+Person(студент, "Студент", "Участник проектной деятельности, создает и выполняет проекты")
+Person(куратор, "Преподаватель-куратор", "Руководит проектами, проверяет этапы, оценивает работы")
+Person(администратор, "Администратор", "Настраивает систему, управляет пользователями и процессами")
+Person(эксперт, "Внешний эксперт/Работодатель", "Просматривает проекты, дает обратную связь")
+System(прис_квп_дс, "ПРИС КВП ДС", "Платформа контроля ведения проектной деятельности студентов")
+System_Ext(эиос, "ЭИОС ГУУ", "Электронная информационно-образовательная среда")
+System_Ext(moodle, "LMS Moodle", "Система управления обучением")
+System_Ext(github, "GitHub/GitLab", "Системы контроля версий")
+System_Ext(облако, "Облачные хранилища", "Google Drive, Yandex.Disk")
+System_Ext(вакансии, "Порталы вакансий", "Системы трудоустройства и стажировок")
+Rel(студент, прис_квп_дс, "Работает с проектами, загружает результаты")
+Rel(куратор, прис_квп_дс, "Управляет проектами, проверяет этапы")
+Rel(администратор, прис_квп_дс, "Настраивает систему, формирует отчетность")
+Rel(эксперт, прис_квп_дс, "Просматривает проекты, оставляет отзывы")
+Rel(прис_квп_дс, эиос, "Синхронизирует данные пользователей (REST API)")
+Rel(прис_квп_дс, moodle, "Импортирует курсы, передает оценки (REST API)")
+Rel(прис_квп_дс, github, "Привязывает репозитории к проектам (API)")
+Rel(прис_квп_дс, облако, "Расширяет возможности хранения файлов (API)")
+Rel(прис_квп_дс, вакансии, "Получает рекомендации по вакансиям (API)")
+@enduml
+
+2. Диаграмма контейнеров (Container Diagram)
+@startuml Диаграмма_контейнеров_ПРИС_КВП_ДС
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+title Диаграмма контейнеров системы ПРИС КВП ДС
+Person(студент, "Студент", "Участник проектной деятельности")
+Person(куратор, "Преподаватель-куратор", "Руководитель проектов")
+Person(администратор, "Администратор", "Администратор системы")
+Person(эксперт, "Внешний эксперт", "Внешний участник")
+System_Boundary(прис_квп_дс, "ПРИС КВП ДС") {
+    Container(web_app, "Веб-приложение", "React + TypeScript", "Одностраничное приложение, пользовательский интерфейс")
+    Container(spa, "SPA Frontend", "JavaScript, React", "Клиентское приложение")
+    Container(api_gateway, "API Gateway", "Python, FastAPI", "Единая точка входа для API")
+    
+    Container(project_service, "Сервис управления проектами", "Python, Django", "Управление проектами и жизненными циклами")
+    Container(auth_service, "Сервис аутентификации", "Python, FastAPI", "Управление пользователями и доступом")
+    Container(communication_service, "Сервис коммуникаций", "Python", "Уведомления, комментарии")
+    Container(analytics_service, "Сервис аналитики", "Python", "Генерация отчетов, дашборды")
+    Container(ai_service, "ИИ-сервис", "Python", "Интеллектуальная поддержка, анализ")
+    ContainerDb(database, "База данных", "PostgreSQL", "Хранение структурированных данных")
+    Container(file_storage, "Файловое хранилище", "Объектное хранилище", "Хранение документов, кода, презентаций")
+}
+Container_Ext(эиос, "ЭИОС ГУУ", "Внешняя система")
+Container_Ext(moodle, "LMS Moodle", "Внешняя система")
+Container_Ext(github, "GitHub API", "Внешний API")
+Container_Ext(облако, "Облачные хранилища", "Внешние сервисы")
+Rel(студент, web_app, "Использует для работы с проектами")
+Rel(куратор, web_app, "Использует для управления проектами")
+Rel(администратор, web_app, "Использует для администрирования")
+Rel(эксперт, web_app, "Использует для просмотра проектов")
+Rel(web_app, api_gateway, "HTTP/REST API")
+Rel(api_gateway, project_service, "Внутренние API вызовы")
+Rel(api_gateway, auth_service, "Аутентификация и авторизация")
+Rel(api_gateway, communication_service, "Управление уведомлениями")
+Rel(api_gateway, analytics_service, "Запросы аналитики")
+Rel(api_gateway, ai_service, "ИИ-функциональность")
+Rel(project_service, database, "Чтение/запись данных")
+Rel(auth_service, database, "Управление пользователями")
+Rel(communication_service, database, "Хранение сообщений")
+Rel(analytics_service, database, "Анализ данных")
+Rel(ai_service, database, "Доступ к данным для анализа")
+Rel(project_service, file_storage, "Работа с файлами проектов")
+Rel(web_app, file_storage, "Прямая загрузка файлов")
+Rel(api_gateway, эиос, "Синхронизация данных (REST API)")
+Rel(api_gateway, moodle, "Обмен данными курсов (REST API)")
+Rel(api_gateway, github, "Интеграция с репозиториями (API)")
+Rel(api_gateway, облако, "Расширенное хранение файлов (API)")
+@enduml
+
+3. Диаграмма компонентов (Component Diagram)
+@startuml Диаграмма_компонентов_ПРИС_КВП_ДС
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+title Диаграмма компонентов сервиса управления проектами
+Container(project_service, "Сервис управления проектами", "Python, Django", "Управление проектами и жизненными циклами")
+Component(project_controller, "Project Controller", "Django REST Framework", "Обработка HTTP запросов проектов")
+Component(lifecycle_controller, "Lifecycle Controller", "Django REST Framework", "Управление жизненными циклами")
+Component(task_controller, "Task Controller", "Django REST Framework", "Управление задачами")
+Component(stage_controller, "Stage Controller", "Django REST Framework", "Управление этапами проектов")
+Component(project_manager, "Project Manager", "Python", "Бизнес-логика управления проектами")
+Component(lifecycle_manager, "Lifecycle Manager", "Python", "Логика жизненных циклов")
+Component(template_manager, "Template Manager", "Python", "Управление шаблонами проектов")
+Component(validation_manager, "Validation Manager", "Python", "Валидация данных проектов")
+Component(project_repository, "Project Repository", "Python", "Доступ к данным проектов")
+Component(lifecycle_repository, "Lifecycle Repository", "Python", "Доступ к данным жизненных циклов")
+Component(task_repository, "Task Repository", "Python", "Доступ к данным задач")
+Component(file_repository, "File Repository", "Python", "Управление файлами проектов")
+
+ContainerDb(database, "База данных", "PostgreSQL", "Хранение структурированных данных")
+Container(file_storage, "Файловое хранилище", "Объектное хранилище", "Хранение документов")
+Rel(project_controller, project_manager, "Вызов бизнес-логики")
+Rel(lifecycle_controller, lifecycle_manager, "Управление ЖЦ")
+Rel(task_controller, project_manager, "Обработка задач")
+Rel(stage_controller, lifecycle_manager, "Управление этапами")
+Rel(project_manager, project_repository, "Доступ к данным")
+Rel(lifecycle_manager, lifecycle_repository, "Доступ к ЖЦ")
+Rel(project_manager, task_repository, "Работа с задачами")
+Rel(project_manager, file_repository, "Управление файлами")
+Rel(template_manager, project_repository, "Шаблоны проектов")
+Rel(validation_manager, project_repository, "Валидация данных")
+Rel(project_repository, database, "SQL запросы")
+Rel(lifecycle_repository, database, "SQL запросы")
+Rel(task_repository, database, "SQL запросы")
+Rel(file_repository, file_storage, "Операции с файлами")
+Container_Boundary(api_gateway, "API Gateway") {
+    Component(gateway_component, "Gateway Router", "FastAPI", "Маршрутизация запросов")
+}
+Rel(gateway_component, project_controller, "Перенаправление запросов проектов")
+Rel(gateway_component, lifecycle_controller, "Перенаправление запросов ЖЦ")
+Rel(gateway_component, task_controller, "Перенаправление запросов задач")
+@enduml
+
+4. Диаграмма кода (Code Diagram) - пример для модели Project
+@startuml Диаграмма_кода_модель_Project
+title Диаграмма кода - Модель Project (Python/Django)
+class Project {
+  - id: UUID
+  - title: String
+  - description: Text
+  - project_type: CharField (choices)
+  - status: CharField (choices)
+  - lifecycle_template: ForeignKey
+  - created_at: DateTime
+  - updated_at: DateTime
+  - deadline: Date
+  + create_project()
+  + update_status()
+  + get_current_stage()
+  + validate_deadline()
+}
+class ProjectType {
+  <<Enumeration>>
+  RESEARCH = "research"
+  BUSINESS = "business"
+  APPLIED = "applied"
+}
+class ProjectStatus {
+  <<Enumeration>>
+  DRAFT = "draft"
+  ACTIVE = "active"
+  REVIEW = "review"
+  COMPLETED = "completed"
+  ARCHIVED = "archived"
+}
+class LifecycleTemplate {
+  - id: UUID
+  - name: String
+  - project_type: CharField
+  - stages: JSONField
+  - is_active: Boolean
+  + get_stages()
+  + validate_template()
+}
+
+class ProjectStage {
+  - id: UUID
+  - project: ForeignKey
+  - stage_number: Integer
+  - stage_name: String
+  - status: CharField
+  - deadline: Date
+  - result: Text
+  + complete_stage()
+  + validate_result()
+}
+
+class ProjectMember {
+  - id: UUID
+  - project: ForeignKey
+  - user: ForeignKey
+  - role: CharField
+  - joined_at: DateTime
+  + change_role()
+  + get_permissions()
+}
+
+class ProjectFile {
+  - id: UUID
+  - project: ForeignKey
+  - file_name: String
+  - file_type: String
+  - file_path: String
+  - uploaded_by: ForeignKey
+  - uploaded_at: DateTime
+  + get_file_url()
+  + validate_file_type()
+}
+
+Project "1" *-- "many" ProjectStage
+Project "1" *-- "many" ProjectMember
+Project "1" *-- "many" ProjectFile
+Project "1" -- "1" LifecycleTemplate
+Project --> ProjectType
+Project --> ProjectStatus
+
+ProjectStage --> ProjectStatus
+
+note right of Project
+  Основная модель проекта
+  Отвечает за управление состоянием
+  и жизненным циклом проекта
+end note
+
+@enduml
