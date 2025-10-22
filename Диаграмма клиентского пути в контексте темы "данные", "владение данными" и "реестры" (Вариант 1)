@@ -1,0 +1,171 @@
+@startuml
+!define RECTANGLE class
+skinparam groupInheritance 3
+skinparam roundcorner 15
+skinparam class {
+  BackgroundColor White
+  BorderColor #1C6EA4
+  ArrowColor #1C6EA4
+}
+
+title ПРИС КВП ДС - Архитектура системы
+
+package "Уровень представления" {
+  [Личный кабинет студента] as student
+  [Личный кабинет куратора] as curator
+  [Личный кабинет администратора] as admin
+  [Портал внешних экспертов] as expert
+}
+
+package "Бизнес-логика" {
+  package "Подсистема взаимодействия" {
+    [Управление пользователями] as users
+    [Аутентификация] as auth
+    [Управление ролями] as roles
+  }
+
+  package "Управление проектами" {
+    [Создание проектов] as create
+    [Жизненный цикл проектов] as lifecycle
+    [Канбан-доски] as kanban
+    [Контроль этапов] as stages
+  }
+
+  package "Управление данными" {
+    [Реестр проектов] as registry
+    [Библиотека шаблонов] as templates
+    [Хранилище файлов] as storage
+  }
+
+  package "Коммуникации и аналитика" {
+    [Система уведомлений] as notifications
+    [Дашборды аналитики] as dashboards
+    [Генерация отчетов] as reports
+    [ИИ-поддержка] as ai
+  }
+
+  package "Безопасность" {
+    [RBAC] as rbac
+    [Шифрование] as encryption
+    [Аудит] as audit
+  }
+}
+
+package "Интеграции" {
+  [ЭИОС ГУУ] as eios
+  [LMS Moodle] as moodle
+  [1C:ЗУП] as 1c
+  [GitHub/GitLab] as git
+  [Облачные хранилища] as cloud
+  [Порталы вакансий] as jobs
+}
+
+package "Базы данных" {
+  database "PostgreSQL" as postgres {
+    [Пользователи] as db_users
+    [Проекты] as db_projects
+    [Этапы] as db_stages
+    [Файлы] as db_files
+    [Аналитика] as db_analytics
+  }
+}
+
+' Связи уровня представления
+student --> users
+curator --> users
+admin --> users
+expert --> users
+
+student --> auth
+curator --> auth
+admin --> auth
+expert --> auth
+
+' Связи бизнес-логики
+users --> roles
+roles --> rbac
+
+create --> lifecycle
+lifecycle --> stages
+stages --> kanban
+
+registry --> templates
+templates --> storage
+
+notifications --> dashboards
+dashboards --> reports
+reports --> ai
+
+' Связи с базами данных
+users --> db_users
+create --> db_projects
+lifecycle --> db_stages
+storage --> db_files
+dashboards --> db_analytics
+
+' Интеграционные связи
+auth --> eios
+auth --> moodle
+users --> 1c
+storage --> git
+storage --> cloud
+ai --> jobs
+
+' Связи безопасности
+rbac --> encryption
+encryption --> audit
+audit --> db_analytics
+
+note right of student
+  Функционал:
+  - Регистрация проектов
+  - Прохождение этапов ЖЦ
+  - Загрузка файлов
+  - Получение уведомлений
+end note
+
+note left of curator
+  Функционал:
+  - Проверка этапов
+  - Оценка проектов
+  - Управление треками
+  - Формирование отчетов
+end note
+
+note right of admin
+  Функционал:
+  - Настройка системы
+  - Управление шаблонами ЖЦ
+  - Мониторинг активности
+  - Аналитика по проектам
+end note
+
+@enduml
+
+Эта диаграмма отражает ключевые аспекты концепции ПРИС КВП ДС:
+
+Основные компоненты:
+
+Уровень представления - Личные кабинеты всех участников
+
+Бизнес-логика - 5 основных подсистем согласно концепции
+
+Интеграции - Внешние системы (ЭИОС, 1С, GitHub и др.)
+
+Базы данных - PostgreSQL с структурированными таблицами
+
+Ключевые особенности архитектуры:
+
+Модульность и масштабируемость
+
+Поддержка различных типов проектов (исследовательские, бизнес, прикладные)
+
+Гибкая система жизненных циклов проектов
+
+Интеграция с профессиональными инструментами (Git, облачные хранилища)
+
+Многоуровневая система безопасности
+
+Инструменты ИИ-поддержки и аналитики
+
+Диаграмма соответствует принципам, заложенным в концепции: процессный подход, открытость, интеграция и безопасность.
